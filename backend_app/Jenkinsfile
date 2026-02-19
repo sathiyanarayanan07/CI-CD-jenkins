@@ -1,6 +1,11 @@
 pipeline {
   agent any
 
+  enivronment {
+    IMAGE_NAME = "sathiyanarayanan07/backend_app"
+    IMAGE_TAG ="${BUILD_NUMBER}"
+  }
+
   stages {
 
     stage('Checkout') {
@@ -12,10 +17,28 @@ pipeline {
      stage('Build Docker Image') {
             steps {
               dir('backend_app'){
-                sh 'docker build -t backend_app .'
+                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
               }
             }
         }
+
+      stage('login to Dockerhub') {
+        steps {
+          withCredentials([usernamepassword(
+            credentialsID: 'dockerhub-creds',
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PASS'
+            )]) {
+               sh 'echo $DOCKER_PASS |docker login -u $DOCKER_USER --password-stdin'
+          }
+        }
+      }
+
+    stage('push Image') {
+      steps {
+        sh ' docker push $IMAGE_NAME:IMAGE_TAG'
+      }
+    }
 
         stage('Deploy') {
             steps {
