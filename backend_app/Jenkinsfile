@@ -36,7 +36,9 @@ pipeline {
 
     stage('push Image') {
       steps {
+        dir('backend_app') {
         sh ' docker push $IMAGE_NAME:IMAGE_TAG'
+        }
       }
     }
 
