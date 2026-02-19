@@ -11,14 +11,19 @@ pipeline {
 
      stage('Build Docker Image') {
             steps {
+              dir('backend_app'){
                 sh 'docker build -t backend_app .'
+              }
             }
         }
 
         stage('Deploy') {
             steps {
+              dir('backend_app') {
+                
                 sh 'docker rm -f backend_app || true'
                 sh 'docker run -d -p 3000:3000 --name backend_app backend_app'
+              }
             }
         }
   }
