@@ -21,6 +21,20 @@ pipeline {
               }
             }
         }
+    stage('Install Dependencies') {
+      steps {
+        dir('backend_app') {
+          sh 'npm install'
+        }
+      }
+    }
+    stage('RUN Tests') {
+      steps {
+        dir('backend_app') {
+          sh 'npm test || true'
+        }
+      }
+    }
 
       stage('login to Dockerhub') {
         steps {
